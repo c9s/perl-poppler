@@ -1,0 +1,36 @@
+
+TYPEMAP
+
+PopplerDocument * T_PTROBJ
+
+PopplerPage * T_PTROBJ
+
+INPUT
+
+T_POPPLERPERL_GENERIC_WRAPPER
+    $var = Sv${;
+      (my $ntype = $type) =~ s/(?:const\s+)?([:\w]+)(?:\s*\*)$/$1/x;
+      my $result = $type;
+      if ($ntype =~ m/(.+)_t(_.+)?/) {
+        my ($name, $options) = ($1, $2);
+        $name =~ s/([^_]+)/ucfirst $1/ge;
+        $name =~ s/_//g;
+        $result = $name . $options;
+      }
+      \$result} ($arg);
+
+OUTPUT
+
+T_POPPLERPERL_GENERIC_WRAPPER
+    $arg = newSV${;
+      (my $ntype = $type) =~ s/(?:const\s+)?([:\w]+)(?:\s*\*)$/$1/x;
+      my $result = $type;
+      if ($ntype =~ m/(.+)_t(_.+)?/) {
+        my ($name, $options) = ($1, $2);
+        $name =~ s/([^_]+)/ucfirst $1/ge;
+        $name =~ s/_//g;
+        $result = $name . $options;
+      }
+      \$result} ($var);
+                               
+

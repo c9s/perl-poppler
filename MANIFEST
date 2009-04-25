@@ -1,0 +1,8 @@
+Changes
+Makefile.PL
+MANIFEST
+Poppler.xs
+ppport.h
+README
+t/Poppler.t
+lib/Poppler.pm
