@@ -8,10 +8,6 @@
 #include <poppler/glib/poppler.h>
 #include <poppler/glib/poppler-page.h>
 
-struct _Dimension  {
-    double w;
-    double h;
-};
 
 SV *
 poppler_document_to_sv( PopplerDocument* document )
@@ -42,6 +38,11 @@ typedef struct {
 typedef struct {
     PopplerPage *handle;
 } _PopplerPage;
+
+typedef struct {
+    double w;
+    double h;
+} _PageDimension;
 
 MODULE = Poppler		PACKAGE = Poppler::Document
 
@@ -80,20 +81,32 @@ OUTPUT:
 
 
 
-// XXX: fix me
-MODULE = Poppler    PACKAGE =  Poppler::Page     PREFIX = poppler_page
+MODULE = Poppler    PACKAGE = Poppler::Page
 
-void
-poppler_page_get_size(page);
-    PopplerPage *page;
+_PageDimension*
+_PopplerPage::get_size();
 PREINIT:
     double doc_w;
     double doc_h;
 CODE:
-    poppler_page_get_size( page , &doc_w , &doc_h );
-    struct _Dimension *page_dim;
-    page_dim->w = doc_w;
-    page_dim->h = doc_h;
+    poppler_page_get_size( THIS->handle , &doc_w , &doc_h );
+    Newz(0, RETVAL, 1, _PageDimension );
+    char * class = "Poppler::Page::Dimension";
+    RETVAL->w = doc_w;
+    RETVAL->h = doc_h;
+OUTPUT:
+    RETVAL
+
+
+void
+poppler_page_render (page, cr); 
+    PopplerPage *page; 
+    cairo_t *cr;
+CODE:
+OUTPUT:
+
+    
+
     
 
 

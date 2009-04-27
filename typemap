@@ -4,8 +4,10 @@ TYPEMAP
 PopplerDocument * T_PTROBJ
 _PopplerDocument * T_OBJECT
 _PopplerPage * T_OBJECT
+_PageDimension * T_OBJECT
 
 PopplerPage * T_PTROBJ
+cairo_t * T_OBJECT
 
 INPUT
 
