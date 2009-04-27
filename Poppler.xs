@@ -347,10 +347,10 @@ CODE:
 OUTPUT:
     RETVAL
 
-unsigned char*
+SV*
 OutputDevData::get_cairo_data()
 CODE:
-    RETVAL = THIS->cairo_data;
+    RETVAL = (SV*) THIS->cairo_data;
 OUTPUT:
     RETVAL
 
