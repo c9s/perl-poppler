@@ -31,10 +31,10 @@ $cr->fill;
 $cr->rectangle (50, 50, 40, 40);
 $cr->set_source_rgb (1, 1, 1);
 $cr->fill;
+$page->render_to_cairo( $cr );
 $cr->show_page;
 $surface->write_to_png ('output.png');
 
-$page->render_to_cairo( $cr );
 
 # XXX: render_to_cairo test
 
