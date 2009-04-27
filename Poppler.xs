@@ -108,7 +108,15 @@ CODE:
     RETVAL = ( ret == TRUE ) ? 1 : 0;
 OUTPUT:
     RETVAL
-    
+
+# GList*
+# hPopplerDocument::get_attachments()
+
+# void
+# poppler_document_get_property
+
+
+
 
 
 
@@ -175,6 +183,80 @@ hPopplerPage::render_to_cairo ( cr);
 CODE:
     poppler_page_render( THIS->handle , cr );
 OUTPUT:
+
+
+##ifdef POPPLER_WITH_GDK
+#void                   poppler_page_render_to_pixbuf     (PopplerPage        *page,
+#							  int                 src_x,
+#							  int                 src_y,
+#							  int                 src_width,
+#							  int                 src_height,
+#							  double              scale,
+#							  int                 rotation,
+#							  GdkPixbuf          *pixbuf);
+#void          poppler_page_render_to_pixbuf_for_printing (PopplerPage        *page,
+#							  int                 src_x,
+#							  int                 src_y,
+#							  int                 src_width,
+#							  int                 src_height,
+#							  double              scale,
+#							  int                 rotation,
+#							  GdkPixbuf          *pixbuf);
+#GdkPixbuf             *poppler_page_get_thumbnail_pixbuf (PopplerPage        *page);
+#void                poppler_page_render_selection_to_pixbuf (
+#							  PopplerPage        *page,
+#							  gdouble             scale,
+#							  int		      rotation,
+#							  GdkPixbuf          *pixbuf,
+#							  PopplerRectangle   *selection,
+#							  PopplerRectangle   *old_selection,
+#							  PopplerSelectionStyle style,
+#							  GdkColor           *glyph_color,
+#							  GdkColor           *background_color);
+##endif /* POPPLER_WITH_GDK */
+
+# #ifdef POPPLER_HAS_CAIRO
+# void                   poppler_page_render               (PopplerPage        *page,
+# 							  cairo_t            *cairo);
+# void                   poppler_page_render_for_printing  (PopplerPage        *page,
+# 							  cairo_t            *cairo);
+# cairo_surface_t       *poppler_page_get_thumbnail        (PopplerPage        *page);
+# void                   poppler_page_render_selection     (PopplerPage        *page,
+# 							  cairo_t            *cairo,
+# 							  PopplerRectangle   *selection,
+# 							  PopplerRectangle   *old_selection,
+# 							  PopplerSelectionStyle style,
+# 							  PopplerColor       *glyph_color,
+# 							  PopplerColor       *background_color);
+# #endif /* POPPLER_HAS_CAIRO */
+
+
+int
+hPopplerPage::get_index()
+CODE:
+    RETVAL = poppler_page_get_index( THIS->handle );
+OUTPUT:
+    RETVAL
+
+
+double
+hPopplerPage::get_duration()
+CODE:
+    RETVAL = poppler_page_get_duration( THIS->handle );
+OUTPUT:
+    RETVAL
+
+int
+hPopplerPage::find_text( text );
+    char *text;
+PREINIT:
+    GList *list;
+CODE:
+    list = poppler_page_find_text( THIS->handle, text );
+    // XXX: convert glist for perl
+    RETVAL = 1;
+OUTPUT:
+    RETVAL
 
 
 
