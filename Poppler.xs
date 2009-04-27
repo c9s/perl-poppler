@@ -79,6 +79,23 @@ OUTPUT:
     RETVAL
 
 
+int
+hPopplerDocument::save_a_copy( uri )
+    char * uri;
+PREINIT:
+    GError **error;
+    gboolean ret;
+CODE:
+    ret = poppler_document_save_a_copy( THIS->handle , uri , error );
+    RETVAL = ( ret == TRUE ) ? 1 : 0;
+OUTPUT:
+    RETVAL
+
+
+
+
+
+
 hPopplerPage*
 hPopplerDocument::get_page( page_num );
     int page_num;
@@ -89,8 +106,7 @@ CODE:
     page = poppler_document_get_page( THIS->handle , page_num );
     char* class = "Poppler::Page";  // XXX: bad hack
     if( page == NULL )
-        FAIL( "get page fail." );
-
+        FAIL( "get page failed." );
 
     RETVAL->handle = page;
 OUTPUT:
