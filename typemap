@@ -2,10 +2,24 @@
 TYPEMAP
 
 PopplerDocument * T_PTROBJ
+_PopplerDocument * T_OBJECT
+_PopplerPage * T_OBJECT
 
 PopplerPage * T_PTROBJ
 
 INPUT
+
+T_OBJECT
+    if (sv_isobject($arg) && SvTYPE(SvRV($arg)) == SVt_PVMG)
+    {
+        IV tmp = SvIV((SV*)SvRV($arg));
+        $var = INT2PTR($type, tmp);
+    }
+    else
+        Perl_croak(aTHX_ \"${Package}::$func_name(): $var is not a blessed SV reference\");
+
+
+
 
 T_POPPLERPERL_GENERIC_WRAPPER
     $var = Sv${;
@@ -20,6 +34,9 @@ T_POPPLERPERL_GENERIC_WRAPPER
       \$result} ($arg);
 
 OUTPUT
+
+T_OBJECT
+    sv_setref_pv($arg, class , (void*)$var);
 
 T_POPPLERPERL_GENERIC_WRAPPER
     $arg = newSV${;
