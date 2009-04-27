@@ -87,7 +87,7 @@ PREINIT:
     gboolean ret;
 CODE:
     ret = poppler_document_save_a_copy( THIS->handle , uri , error );
-    RETVAL = ( ret == TRUE ) ? 1 : 0;
+    RETVAL = ( ret == TRUE ) ? 1 : 0;   // XXX: should convert in typemap
 OUTPUT:
     RETVAL
 
@@ -97,6 +97,18 @@ CODE:
     RETVAL = poppler_document_get_n_pages( THIS->handle );
 OUTPUT:
     RETVAL
+
+
+int
+hPopplerDocument::has_attachments()
+PREINIT:
+    gboolean ret;
+CODE:
+    ret = poppler_document_has_attachments( THIS->handle );
+    RETVAL = ( ret == TRUE ) ? 1 : 0;
+OUTPUT:
+    RETVAL
+    
 
 
 
