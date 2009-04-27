@@ -105,7 +105,21 @@ poppler_page_render (page, cr);
 CODE:
 OUTPUT:
 
-    
+MODULE = Poppler    PACKAGE = Poppler::Page::Dimension
+
+int
+_PageDimension::get_width()
+CODE:
+    RETVAL = THIS->w;
+OUTPUT:
+    RETVAL
+
+int
+_PageDimension::get_height()
+CODE:
+    RETVAL = THIS->h;
+OUTPUT:
+    RETVAL
 
     
 

@@ -17,6 +17,11 @@ warn Dumper( $o );
 my $page = $o->get_page( 0 );
 warn Dumper( $page );
 
+my $dimension = $page->get_size;
+warn Dumper( $dimension );
+
+warn $dimension->get_width;
+
 
 
 __END__
