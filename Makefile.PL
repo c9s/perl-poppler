@@ -1,7 +1,21 @@
 use 5.010000;
+
+use ExtUtils::PkgConfig;
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
+my %extreqs = (
+    poppler => '0.10.5',
+    # XXX: poppler-data ?
+);
+
+my %poppler_cfg;
+print "Checking poppler lib\n";
+eval { %poppler_cfg = ExtUtils::PkgConfig->find ("poppler >= $extreqs{poppler}"); };
+if ($@ ne '') {
+    warn $@; 
+    exit 0;
+}
+
 WriteMakefile(
     NAME              => 'Poppler',
     VERSION_FROM      => 'lib/Poppler.pm', # finds $VERSION
