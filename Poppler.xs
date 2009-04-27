@@ -5,6 +5,7 @@
 
 #include "perl-poppler.h"
 
+
 #include <poppler.h>
 #include <poppler/glib/poppler.h>
 #include <poppler/glib/poppler-page.h>
@@ -26,6 +27,11 @@ typedef struct {
     PopplerAttachment *handle;
 } hPopplerAttachment;
 
+typedef struct {
+  unsigned char *cairo_data;
+  cairo_surface_t *surface;
+  cairo_t *cairo;
+} OutputDevData;
 
 
 typedef struct {
@@ -258,6 +264,38 @@ OUTPUT:
     RETVAL
 
 
+OutputDevData*
+hPopplerPage::prepare_output_dev(  scale , rotation , _transparent ) ;
+    double scale;
+    int rotation;
+    int _transparent;
+PREINIT:
+    OutputDevData *output_dev_data;
+    gboolean transparent;
+CODE:
+    transparent = ( _transparent == 1 ? TRUE : FALSE );
+    char* class = "Poppler::OutputDevData";
+    poppler_page_prepare_output_dev(
+        THIS->handle,
+        rotation,
+        transparent,
+        output_dev_data
+    );
+    RETVAL = output_dev_data;
+OUTPUT:
+    RETVAL
+
+
+## void
+## hPopplerPage::copy_to_pixbuf( output_dev_data )
+##     OutputDevData *output_dev_data;
+## PREINIT:
+##     GdkPixbuf * pixbuf;
+## CODE:
+##     poppler_page_copy_to_pixbuf( THIS->handle , pixbuf , output_dev_data );
+## NO_OUPUT:
+
+
 MODULE = Poppler    PACKAGE = Poppler::Attachment
 
 int
@@ -289,6 +327,32 @@ CODE:
 OUTPUT:
     RETVAL
 
+
+
+MODULE = Poppler    PACKAGE = Poppler::OutputDevData
+
+cairo_t*
+OutputDevData::get_cairo_context()
+CODE:
+    char * class = "Cairo::Context";
+    RETVAL = THIS->cairo;
+OUTPUT:
+    RETVAL
+
+cairo_surface_t*
+OutputDevData::get_cairo_surface()
+CODE:
+    char * class = "Cairo::Surface";
+    RETVAL = THIS->surface;
+OUTPUT:
+    RETVAL
+
+unsigned char*
+OutputDevData::get_cairo_data()
+CODE:
+    RETVAL = THIS->cairo_data;
+OUTPUT:
+    RETVAL
 
 
 
