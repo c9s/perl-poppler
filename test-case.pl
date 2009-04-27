@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use utf8;
 
-use ExtUtils::testlib;
+# use ExtUtils::testlib;
 
 use Poppler;
 

@@ -8,22 +8,11 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use Poppler ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
+our %EXPORT_TAGS = ( 'all' => [ qw( ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our @EXPORT = qw(
-	
-);
+our @EXPORT = qw( );
 
 our $VERSION = '0.01';
 
@@ -34,11 +23,10 @@ XSLoader::load('Poppler', $VERSION);
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Poppler - Perl extension for poppler library.
+Poppler - perl binding of poppler library.
 
 =head1 SYNOPSIS
 
@@ -66,7 +54,6 @@ Poppler - Perl extension for poppler library.
 
 __END__
 
-
 =head1 DESCRIPTION
 
 
@@ -76,13 +63,21 @@ None by default.
 
 =head1 SEE ALSO
 
+github repository:
+
+    http://github.com/c9s/perl-poppler/tree/master
+
+poppler:
+
+    http://poppler.freedesktop.org/
+
 =head1 AUTHOR
 
 Cornelius , C< cornelius.howl _at_ gmail.com >
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by c9s
+Copyright (C) 2009 by c9s (Corenlius)
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.0 or,
