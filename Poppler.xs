@@ -4,28 +4,11 @@
 #include "ppport.h"
 
 #include "perl-poppler.h"
+
 #include <poppler.h>
 #include <poppler/glib/poppler.h>
 #include <poppler/glib/poppler-page.h>
 
-
-SV *
-poppler_document_to_sv( PopplerDocument* document )
-{
-    SV *sv = newSV (0);
-    char* pkg = "Poppler::Document";
-    sv_setref_pv(sv, pkg , document );
-    return sv;
-}
-
-SV *
-poppler_page_to_sv( PopplerPage* page )
-{
-    SV *sv = newSV (0);
-    char* pkg = "Poppler::Page";
-    sv_setref_pv(sv, pkg , page );
-    return sv;
-}
 
 #define FAIL(msg)							\
     do { fprintf (stderr, "FAIL: %s\n", msg); exit (-1); } while (0)
@@ -38,6 +21,10 @@ typedef struct {
 typedef struct {
     PopplerPage *handle;
 } hPopplerPage;
+
+typedef struct {
+    PopplerAttachment *handle;
+} hPopplerAttachment;
 
 typedef struct {
     double w;
@@ -109,25 +96,22 @@ CODE:
 OUTPUT:
     RETVAL
 
+
 void
 hPopplerDocument::get_attachments()
 PREINIT:
-    GList *list,*i;
+    GList* i;
+    GList* list;
 PPCODE:
-    list = poppler_document_get_attachements( THIS->handle );
+    list = (GList*) poppler_document_get_attachments( THIS->handle );
     for (i = list; i != NULL; i = i->next) {
-        SV *sv = newSV(0);
-        char* pkg = "Poppler::Attachment";
-        sv_setref_pv(sv, pkg , i->data );
-        XPUSHs( sv_2mortal (  sv ) );
+        SV * sv;
+        SV * pv;
+        Newz(0, pv, 1, hPopplerDocument );
+        sv_setref_pv( sv , "Poppler::Attachment" , (void*) pv );
+        XPUSHs ( sv_2mortal( sv ) );
     }
     g_list_free(list);
-
-# void
-# poppler_document_get_property
-
-
-
 
 
 
@@ -268,6 +252,9 @@ CODE:
     RETVAL = 1;
 OUTPUT:
     RETVAL
+
+
+MODULE = Poppler    PACKAGE = Poppler::Attachment
 
 
 

@@ -7,13 +7,18 @@ use ExtUtils::testlib;
 
 use Poppler;
 
-use Data::Dumper;
+use Data::Dumper::Simple;
 
+warn '--------------------------------------------------';
 my $path = 'file:///Users/c9s/git-working/perl-poppler/perlxs.pdf';
 my $o = Poppler::Document->new_from_file($path);
 warn Dumper( $o );
 
 $o->save('file:///tmp/test.pdf');
+
+my @attaches = $o->get_attachments;
+warn Dumper( @attaches );
+
 
 my $page = $o->get_page( 0 );
 warn Dumper( $page );
