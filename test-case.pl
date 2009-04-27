@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use utf8;
 
-# use ExtUtils::testlib;
+use ExtUtils::testlib;
 
 use Poppler;
 
@@ -12,6 +12,8 @@ use Data::Dumper;
 my $path = 'file:///Users/c9s/git-working/perl-poppler/perlxs.pdf';
 my $o = Poppler::Document->new_from_file($path);
 warn Dumper( $o );
+
+$o->save('file:///tmp/test.pdf');
 
 my $page = $o->get_page( 0 );
 warn Dumper( $page );

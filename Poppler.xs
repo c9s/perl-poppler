@@ -33,22 +33,22 @@ poppler_page_to_sv( PopplerPage* page )
 
 typedef struct {
     PopplerDocument *handle;
-} _PopplerDocument;
+} hPopplerDocument;
 
 typedef struct {
     PopplerPage *handle;
-} _PopplerPage;
+} hPopplerPage;
 
 typedef struct {
     double w;
     double h;
-} _PageDimension;
+} hPageDimension;
 
 MODULE = Poppler		PACKAGE = Poppler::Document
 
 PROTOTYPES: ENABLE
 
-_PopplerDocument*
+hPopplerDocument*
 new_from_file( class , filename )
     char * class;
     char * filename;
@@ -56,7 +56,7 @@ PREINIT:
     PopplerDocument *document;
 CODE:
     g_type_init();
-    Newz(0, RETVAL, 1, _PopplerDocument );
+    Newz(0, RETVAL, 1, hPopplerDocument );
     document = poppler_document_new_from_file( filename , NULL , NULL );
     if( document == NULL ) {
         fprintf( stderr , filename );
@@ -66,13 +66,26 @@ CODE:
 OUTPUT:
     RETVAL
 
-_PopplerPage*
-_PopplerDocument::get_page( page_num );
+int
+hPopplerDocument::save( uri )
+    char * uri;
+PREINIT:
+    gboolean ret;
+    GError **error;
+CODE:
+    ret = poppler_document_save( THIS->handle , uri , error );
+    RETVAL = ( ret == TRUE ) ? 1 : 0;
+OUTPUT:
+    RETVAL
+
+
+hPopplerPage*
+hPopplerDocument::get_page( page_num );
     int page_num;
 PREINIT: 
     PopplerPage* page;
 CODE:
-    Newz(0, RETVAL, 1, _PopplerPage );
+    Newz(0, RETVAL, 1, hPopplerPage );
     page = poppler_document_get_page( THIS->handle , page_num );
     char* class = "Poppler::Page";  // XXX: bad hack
     if( page == NULL )
@@ -86,14 +99,14 @@ OUTPUT:
 
 MODULE = Poppler    PACKAGE = Poppler::Page
 
-_PageDimension*
-_PopplerPage::get_size();
+hPageDimension*
+hPopplerPage::get_size();
 PREINIT:
     double doc_w;
     double doc_h;
 CODE:
     poppler_page_get_size( THIS->handle , &doc_w , &doc_h );
-    Newz(0, RETVAL, 1, _PageDimension );
+    Newz(0, RETVAL, 1, hPageDimension );
     char * class = "Poppler::Page::Dimension";
     RETVAL->w = doc_w;
     RETVAL->h = doc_h;
@@ -101,7 +114,7 @@ OUTPUT:
     RETVAL
 
 void
-_PopplerPage::render_to_cairo ( cr); 
+hPopplerPage::render_to_cairo ( cr); 
     cairo_t *cr;
 CODE:
     poppler_page_render( THIS->handle , cr );
@@ -112,14 +125,14 @@ OUTPUT:
 MODULE = Poppler    PACKAGE = Poppler::Page::Dimension
 
 int
-_PageDimension::get_width()
+hPageDimension::get_width()
 CODE:
     RETVAL = THIS->w;
 OUTPUT:
     RETVAL
 
 int
-_PageDimension::get_height()
+hPageDimension::get_height()
 CODE:
     RETVAL = THIS->h;
 OUTPUT:
