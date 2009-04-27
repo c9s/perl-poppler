@@ -23,6 +23,7 @@ warn Dumper( $dimension );
 warn $dimension->get_width;
 
 
+# XXX: render_to_cairo test
 
 __END__
 

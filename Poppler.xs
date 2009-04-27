@@ -80,7 +80,6 @@ OUTPUT:
     RETVAL
 
 
-
 MODULE = Poppler    PACKAGE = Poppler::Page
 
 _PageDimension*
@@ -97,13 +96,15 @@ CODE:
 OUTPUT:
     RETVAL
 
-
 void
-poppler_page_render (page, cr); 
+_PopplerPage::render_to_cairo (page, cr); 
     PopplerPage *page; 
     cairo_t *cr;
 CODE:
+    poppler_render( THIS->handle , cr );
 OUTPUT:
+
+
 
 MODULE = Poppler    PACKAGE = Poppler::Page::Dimension
 
