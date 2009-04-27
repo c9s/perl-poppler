@@ -109,8 +109,19 @@ CODE:
 OUTPUT:
     RETVAL
 
-# GList*
-# hPopplerDocument::get_attachments()
+void
+hPopplerDocument::get_attachments()
+PREINIT:
+    GList *list,*i;
+PPCODE:
+    list = poppler_document_get_attachements( THIS->handle );
+    for (i = list; i != NULL; i = i->next) {
+        SV *sv = newSV(0);
+        char* pkg = "Poppler::Attachment";
+        sv_setref_pv(sv, pkg , i->data );
+        XPUSHs( sv_2mortal (  sv ) );
+    }
+    g_list_free(list);
 
 # void
 # poppler_document_get_property
