@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 
 my %extreqs = (
     poppler => '0.10.5',
-    # XXX: poppler-data ?
+    # XXX: poppler-data , glib ?
 );
 
 my %poppler_cfg;
@@ -30,6 +30,4 @@ WriteMakefile(
     # OBJECT            => '$(O_FILES)', # link all the C files too
     INC     => `pkg-config --cflags poppler-glib`,
     LIBS    => `pkg-config --libs poppler-glib`,
-    # INC     => ' -I/usr/include/librsvg-2 ' . `pkg-config --cflags cairo librsvg-2.0` , 
-    # LIBS    => '  ' . `pkg-config --libs-only-l cairo librsvg-2.0` ,
 );

@@ -7,7 +7,6 @@ use utf8;
 
 use Poppler;
 
-
 use Data::Dumper;
 
 my $path = 'file:///Users/c9s/git-working/perl-poppler/perlxs.pdf';
