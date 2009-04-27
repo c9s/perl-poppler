@@ -38,41 +38,47 @@ __END__
 
 =head1 NAME
 
-Poppler - Perl extension for blah blah blah
+Poppler - Perl extension for poppler library.
 
 =head1 SYNOPSIS
 
-  use Poppler;
-  blah blah blah
+    use Poppler;
+    my $path = 'file:///path/to/some.pdf';
+
+    my $o = Poppler::Document->new_from_file($path);
+
+    my $page = $o->get_page( 0 );
+
+    my $dimension = $page->get_size;
+
+    warn $dimension->get_width;
+    warn $dimension->get_height;
+
+    # render to cairo
+    use Cairo;
+    my $surface = Cairo::ImageSurface->create ('argb32', 100, 100);
+    my $cr = Cairo::Context->create ($surface);
+
+    $page->render_to_cairo( $cr );
+
+    $cr->show_page;
+    $surface->write_to_png ('output.png');
+
+__END__
+
 
 =head1 DESCRIPTION
 
-Stub documentation for Poppler, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
 
 =head2 EXPORT
 
 None by default.
 
-
-
 =head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 
-c9s, E<lt>c9s@localE<gt>
+Cornelius , C< cornelius.howl _at_ gmail.com >
 
 =head1 COPYRIGHT AND LICENSE
 
