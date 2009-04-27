@@ -26,6 +26,8 @@ typedef struct {
     PopplerAttachment *handle;
 } hPopplerAttachment;
 
+
+
 typedef struct {
     double w;
     double h;
@@ -106,7 +108,7 @@ PPCODE:
     list = (GList*) poppler_document_get_attachments( THIS->handle );
     for (i = list; i != NULL; i = i->next) {
         SV * sv;
-        SV * pv;
+        hPopplerDocument * pv;
         Newz(0, pv, 1, hPopplerDocument );
         sv_setref_pv( sv , "Poppler::Attachment" , (void*) pv );
         XPUSHs ( sv_2mortal( sv ) );
@@ -129,6 +131,8 @@ CODE:
     RETVAL->handle = page;
 OUTPUT:
     RETVAL
+
+
 
 
 
@@ -256,6 +260,17 @@ OUTPUT:
 
 MODULE = Poppler    PACKAGE = Poppler::Attachment
 
+int
+hPopplerAttachment::save( filename );
+    char * filename;
+PREINIT:
+    GError **error;
+    gboolean ret;
+CODE:
+    ret = poppler_attachment_save( THIS->handle , filename , error );
+    RETVAL = ( ret == TRUE ) ? 1 : 0;
+OUTPUT:
+    RETVAL
 
 
 MODULE = Poppler    PACKAGE = Poppler::Page::Dimension
@@ -274,6 +289,8 @@ CODE:
 OUTPUT:
     RETVAL
 
-    
+
+
+
 
 

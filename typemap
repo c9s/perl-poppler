@@ -4,6 +4,7 @@ TYPEMAP
 PopplerDocument * T_PTROBJ
 hPopplerDocument * T_OBJECT
 hPopplerPage * T_OBJECT
+hPopplerAttachment * T_OBJECT
 hPageDimension * T_OBJECT
 
 PopplerPage * T_PTROBJ
