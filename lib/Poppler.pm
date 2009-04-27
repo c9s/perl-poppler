@@ -57,9 +57,45 @@ __END__
 =head1 DESCRIPTION
 
 
-=head2 EXPORT
+=head1 L<Poppler::Document>
 
-None by default.
+=head2 L<Poppler::Document> Blessed Object = Poppler::Document->new_from_file( STRING uri )
+
+=head2 BOOLEAN = $poppler_document->save( STRING uri )
+
+=head2 BOOLEAN = $poppler_document->save_a_copy( STRING uri )
+
+=head2 INT = $poppler_document->get_n_pages()
+
+=head2 BOOLEAN = $poppler_documnet->has_attachment()
+
+=head2 LIST OF L<Poppler::Attachment> = $poppler_document->get_attachments()
+
+=head2 L<Poppler::Page> Blessed Object = $poppler_document->get_page_by_label( STRING label );
+
+=head2 L<Poppler::Page> Blessed Object = $poppler_document->get_page( INT page_number );
+
+
+
+=head1 L<Poppler::Page>
+
+=head2 INT = $poppler_page->get_index( ) 
+
+=head2 $poppler_page->render_to_cairo( L<Cairo::Context> cr )
+
+=head2 L<Poppler::OutputDevData> Blessed Object = $page->prepare_output_dev( DOUBLE scale , INT rotation , BOOLEAN transparent )
+
+
+
+
+=head1 L<Poppler::OutputDevData>
+
+=head2 L<Cairo::Context> = $output_dev_data->get_cairo_context()
+
+=head2 L<Cairo::Surface> = $output_dev_data::OutputDevData->get_cairo_surface()
+
+=head2 SCALAR data = $output_dev_data->get_cairo_data()
+
 
 =head1 SEE ALSO
 
