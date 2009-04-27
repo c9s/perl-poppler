@@ -91,7 +91,29 @@ CODE:
 OUTPUT:
     RETVAL
 
+int
+hPopplerDocument::get_n_pages()
+CODE:
+    RETVAL = poppler_document_get_n_pages( THIS->handle );
+OUTPUT:
+    RETVAL
 
+
+
+hPopplerPage*
+hPopplerDocument::get_page_by_label( label );
+    char * label;
+PREINIT: 
+    PopplerPage* page;
+CODE:
+    Newz(0, RETVAL, 1, hPopplerPage );
+    page = poppler_document_get_page_by_label( THIS->handle , label );
+    char* class = "Poppler::Page";  
+    if( page == NULL )
+        FAIL( "get page failed." );
+    RETVAL->handle = page;
+OUTPUT:
+    RETVAL
 
 
 
@@ -111,6 +133,12 @@ CODE:
     RETVAL->handle = page;
 OUTPUT:
     RETVAL
+
+
+
+
+
+
 
 
 MODULE = Poppler    PACKAGE = Poppler::Page
