@@ -75,6 +75,10 @@ CODE:
     Newz(0, RETVAL, 1, _PopplerPage );
     page = poppler_document_get_page( THIS->handle , page_num );
     char* class = "Poppler::Page";  // XXX: bad hack
+    if( page == NULL )
+        FAIL( "get page fail." );
+
+
     RETVAL->handle = page;
 OUTPUT:
     RETVAL
@@ -97,11 +101,10 @@ OUTPUT:
     RETVAL
 
 void
-_PopplerPage::render_to_cairo (page, cr); 
-    PopplerPage *page; 
+_PopplerPage::render_to_cairo ( cr); 
     cairo_t *cr;
 CODE:
-    poppler_render( THIS->handle , cr );
+    poppler_page_render( THIS->handle , cr );
 OUTPUT:
 
 
