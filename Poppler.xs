@@ -266,26 +266,27 @@ CODE:
 OUTPUT:
     RETVAL
 
-OutputDevData*
-hPopplerPage::prepare_output_dev(  scale , rotation , _transparent ) ;
-    double scale;
-    int rotation;
-    int _transparent;
-PREINIT:
-    OutputDevData *output_dev_data;
-    gboolean transparent;
-CODE:
-    transparent = ( _transparent == 1 ? TRUE : FALSE );
-    char* class = "Poppler::OutputDevData";
-    poppler_page_prepare_output_dev(
-        THIS->handle,
-        rotation,
-        transparent,
-        output_dev_data
-    );
-    RETVAL = output_dev_data;
-OUTPUT:
-    RETVAL
+## XXX: static function
+## OutputDevData*
+## hPopplerPage::prepare_output_dev(  scale , rotation , _transparent ) ;
+##     double scale;
+##     int rotation;
+##     int _transparent;
+## PREINIT:
+##     OutputDevData *output_dev_data;
+##     gboolean transparent;
+## CODE:
+##     transparent = ( _transparent == 1 ? TRUE : FALSE );
+##     char* class = "Poppler::OutputDevData";
+##     poppler_page_prepare_output_dev(
+##         THIS->handle,
+##         rotation,
+##         transparent,
+##         output_dev_data
+##     );
+##     RETVAL = output_dev_data;
+## OUTPUT:
+##     RETVAL
 
 
 ## void
