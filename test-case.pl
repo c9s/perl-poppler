@@ -19,7 +19,6 @@ $o->save('file:///tmp/test.pdf');
 my @attaches = $o->get_attachments;
 warn Dumper( @attaches );
 
-
 my $page = $o->get_page( 0 );
 warn Dumper( $page );
 

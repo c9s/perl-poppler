@@ -41,6 +41,9 @@ typedef struct {
 
 MODULE = Poppler		PACKAGE = Poppler::Document
 
+BOOT:
+    g_type_init();
+
 PROTOTYPES: ENABLE
 
 hPopplerDocument*
@@ -262,7 +265,6 @@ CODE:
     RETVAL = 1;
 OUTPUT:
     RETVAL
-
 
 OutputDevData*
 hPopplerPage::prepare_output_dev(  scale , rotation , _transparent ) ;
