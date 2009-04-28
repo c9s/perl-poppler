@@ -6,7 +6,6 @@ use utf8;
 use ExtUtils::testlib;
 
 use Poppler;
-
 use Data::Dumper::Simple;
 
 warn '--------------------------------------------------';

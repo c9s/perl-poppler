@@ -2,42 +2,13 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "ppport.h"
-
 #include "perl-poppler.h"
 
-
-#include <poppler.h>
-#include <poppler/glib/poppler.h>
-#include <poppler/glib/poppler-page.h>
-
-
-#define FAIL(msg)							\
-    do { fprintf (stderr, "FAIL: %s\n", msg); exit (-1); } while (0)
-
-
-typedef struct {
-    PopplerDocument *handle;
-} hPopplerDocument;
-
-typedef struct {
-    PopplerPage *handle;
-} hPopplerPage;
-
-typedef struct {
-    PopplerAttachment *handle;
-} hPopplerAttachment;
-
-typedef struct {
-  unsigned char *cairo_data;
-  cairo_surface_t *surface;
-  cairo_t *cairo;
-} OutputDevData;
-
-
-typedef struct {
-    double w;
-    double h;
-} hPageDimension;
+#define POPPLER_PERL_CALL_BOOT(name)              \
+    {                           \
+        extern XS(name);                \
+        call_xs (aTHX_ name, cv, mark); \
+    }
 
 MODULE = Poppler		PACKAGE = Poppler::Document
 
@@ -142,10 +113,6 @@ OUTPUT:
     RETVAL
 
 
-
-
-
-
 hPopplerPage*
 hPopplerDocument::get_page( page_num );
     int page_num;
@@ -163,13 +130,7 @@ OUTPUT:
     RETVAL
 
 
-
-
-
-
-
-
-MODULE = Poppler    PACKAGE = Poppler::Page
+MODULE = Poppler::Page    PACKAGE = Poppler::Page
 
 hPageDimension*
 hPopplerPage::get_size();
@@ -297,6 +258,10 @@ OUTPUT:
 ## CODE:
 ##     poppler_page_copy_to_pixbuf( THIS->handle , pixbuf , output_dev_data );
 ## NO_OUPUT:
+
+
+
+
 
 
 MODULE = Poppler    PACKAGE = Poppler::Attachment
