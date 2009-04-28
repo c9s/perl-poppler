@@ -1,3 +1,5 @@
+#ifndef PERL_POPPLER_H
+#define PERL_POPPLER_H
 
 #include <poppler.h>
 #include <poppler/glib/poppler.h>
@@ -31,3 +33,5 @@ typedef struct {
     double w;
     double h;
 } hPageDimension;
+
+#endif
