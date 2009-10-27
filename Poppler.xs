@@ -28,8 +28,7 @@ CODE:
     Newz(0, RETVAL, 1, hPopplerDocument );
     document = poppler_document_new_from_file( filename , NULL , NULL );
     if( document == NULL ) {
-        fprintf( stderr , filename );
-        FAIL("poppler_document_new_from_file fail");  // XXX: show path usage
+        croak("poppler_document_new_from_file failed for %s", filename);
     }
     RETVAL->handle = document;
 OUTPUT:
@@ -107,7 +106,7 @@ CODE:
     page = poppler_document_get_page_by_label( THIS->handle , label );
     char* class = "Poppler::Page";  
     if( page == NULL )
-        FAIL( "get page failed." );
+        croak( "get page failed." );
     RETVAL->handle = page;
 OUTPUT:
     RETVAL
@@ -123,7 +122,7 @@ CODE:
     page = poppler_document_get_page( THIS->handle , page_num );
     char* class = "Poppler::Page";  // XXX: bad hack
     if( page == NULL )
-        FAIL( "get page failed." );
+        croak( "get page failed." );
 
     RETVAL->handle = page;
 OUTPUT:
