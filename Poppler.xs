@@ -135,6 +135,11 @@ OUTPUT:
 
 MODULE = Poppler::Page    PACKAGE = Poppler::Page
 
+void DESTROY(hPopplerPage *page)
+CODE:
+  g_object_unref( page->handle );
+
+
 hPageDimension*
 hPopplerPage::get_size();
 PREINIT:
@@ -269,6 +274,11 @@ OUTPUT:
 
 MODULE = Poppler    PACKAGE = Poppler::Attachment
 
+void DESTROY(hPopplerAttachment *attachment)
+CODE:
+  g_object_unref( attachment->handle );
+
+
 int
 hPopplerAttachment::save( filename );
     char * filename;
@@ -301,6 +311,12 @@ OUTPUT:
 
 
 MODULE = Poppler    PACKAGE = Poppler::OutputDevData
+
+void DESTROY(OutputDevData *outputdevdata)
+CODE:
+  cairo_surface_destroy( outputdevdata->surface );
+  cairo_destroy( outputdevdata->cairo );
+
 
 cairo_t*
 OutputDevData::get_cairo_context()
