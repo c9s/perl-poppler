@@ -13,8 +13,12 @@ print "Checking poppler lib\n";
 eval { %poppler_cfg = ExtUtils::PkgConfig->find ("poppler >= $extreqs{poppler}"); };
 if ($@ ne '') {
     warn $@; 
-    exit 0;
+    WriteMakefile(
+        PREREQ_FATAL => 1,
+    );
+    exit 1;
 }
+
 
 WriteMakefile(
     NAME              => 'Poppler',
@@ -30,6 +34,7 @@ WriteMakefile(
     LIBS    =>  `pkg-config --libs poppler-glib`,
     XS      => {
         'Poppler.xs' => 'Poppler.c',
+        'Goo.xs' => 'Goo.c',
     },
-    'OBJECT' => 'Poppler$(OBJ_EXT)' ,
+    'OBJECT' => 'Poppler$(OBJ_EXT) Goo$(OBJ_EXT)' ,
 );
