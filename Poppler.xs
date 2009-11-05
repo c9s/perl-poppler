@@ -17,6 +17,10 @@ BOOT:
 
 PROTOTYPES: ENABLE
 
+void DESTROY(hPopplerDocument *doc)
+CODE:
+  g_object_unref( doc->handle );
+
 hPopplerDocument*
 new_from_file( class , filename )
     char * class;
