@@ -7,9 +7,10 @@ use ExtUtils::testlib;
 
 use Poppler;
 use Data::Dumper::Simple;
+use Cwd;
 
-warn '--------------------------------------------------';
-my $path = 'file:///Users/c9s/git-working/perl-poppler/perlxs.pdf';
+my $path = 'file://' . getcwd() . '/test.pdf';
+# my $path = 'file:///Users/c9s/git-working/perl-poppler/perlxs.pdf';
 my $o = Poppler::Document->new_from_file($path);
 warn Dumper( $o );
 
