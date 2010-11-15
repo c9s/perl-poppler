@@ -34,7 +34,7 @@ WriteMakefile(
     LIBS    =>  `pkg-config --libs poppler-glib`,
     XS      => {
         'Poppler.xs' => 'Poppler.c',
-        'Goo.xs' => 'Goo.c',
+        # 'Goo.xs' => 'Goo.c',
     },
-    'OBJECT' => 'Poppler$(OBJ_EXT) Goo$(OBJ_EXT)' ,
+    'OBJECT' => 'Poppler$(OBJ_EXT)', # Goo$(OBJ_EXT)' ,
 );
