@@ -34,6 +34,11 @@ Poppler - perl binding of poppler library.
     my $path = 'file:///path/to/some.pdf';
 
     my $o = Poppler::Document->new_from_file($path);
+    # or if you want to open the pdf in perl, or use some othe source:
+    #  open (PDF, "<FILE.PDF");
+    #  read (PDF, my $data, -s "FILE.PDF");
+    #  close (PDF);
+    #  my $o = Poppler::Document->new_from_data($data, length($data));
 
     my $page = $o->get_page( 0 );
 
@@ -60,6 +65,8 @@ __END__
 =head1 L<Poppler::Document>
 
 =head2 L<Poppler::Document> Blessed Object = Poppler::Document->new_from_file( STRING uri )
+
+=head2 L<Poppler::Document> Blessed Object = Poppler::Document->new_from_data( STRING pdf_data, length ( STRING pdf_data ) )
 
 =head2 BOOLEAN = $poppler_document->save( STRING uri )
 

@@ -38,6 +38,24 @@ CODE:
 OUTPUT:
     RETVAL
 
+hPopplerDocument*
+new_from_data( class , data , length )
+		char * class;
+		char * data;
+		int * length;
+PREINIT:
+		PopplerDocument *document;
+CODE:
+		g_type_init();
+		Newz(0, RETVAL, 1, hPopplerDocument );
+		document = poppler_document_new_from_data( data, length, NULL, NULL );
+		if( document == NULL ) {
+        croak("poppler_document_new_from_data failed");
+		}
+		RETVAL->handle = document;
+OUTPUT:
+		RETVAL
+
 int
 hPopplerDocument::save( uri )
     char * uri;
