@@ -37,4 +37,9 @@ WriteMakefile(
         # 'Goo.xs' => 'Goo.c',
     },
     'OBJECT' => 'Poppler$(OBJ_EXT)', # Goo$(OBJ_EXT)' ,
+    META_MERGE        => {
+        resources => {
+            repository => 'https://github.com/c9s/perl-poppler',
+        },
+    },
 );
