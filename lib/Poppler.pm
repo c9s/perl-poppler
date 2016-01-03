@@ -1,130 +1,312 @@
-package Poppler;
+package PDF::Poppler 1.01;
 
-use 5.010000;
-use strict;
-use warnings;
-
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-our %EXPORT_TAGS = ( 'all' => [ qw( ) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw( );
-
-our $VERSION = '0.03';
-
-require XSLoader;
-XSLoader::load('Poppler', $VERSION);
-
-# Preloaded methods go here.
-
-1;
-__END__
+=encoding utf8
 
 =head1 NAME
 
-Poppler - perl binding of poppler library.
+Poppler - Bindings to the poppler PDF rendering library
 
 =head1 SYNOPSIS
 
-    use Poppler;
-    my $path = 'file:///path/to/some.pdf';
+  use Poppler;
 
-    my $o = Poppler::Document->new_from_file($path);
-    # or if you want to open the pdf in perl, or use some othe source:
-    #  open (PDF, "<FILE.PDF");
-    #  read (PDF, my $data, -s "FILE.PDF");
-    #  close (PDF);
-    #  my $o = Poppler::Document->new_from_data($data, length($data));
+  # initialize using filename 
+  my $pdf = Poppler::Document->new_from_file( 'file.pdf' );
 
-    my $page = $o->get_page( 0 );
+  # or, initialize using scalar data
+  open my $fh, '<:raw', 'file.pdf';
+  read ($fh, my $data, -s 'file.pdf')
+  close $fh;
+  my $pdf = Poppler::Document->new_from_data( $data );
 
-    my $dimension = $page->get_size;
+  # get some general info
+  my $n_pages = $pdf->get_n_pages;
+  my $title   = $pdf->get_title; 
+  # etc ...
 
-    warn $dimension->get_width;
-    warn $dimension->get_height;
+  # get the first page
+  my $page = $pdf->get_page( 0 );
 
-    # render to cairo
-    use Cairo;
-    my $surface = Cairo::ImageSurface->create ('argb32', 100, 100);
-    my $cr = Cairo::Context->create ($surface);
+  # get page size
+  my ($w, $h)  = $page->get_size;
 
-    $page->render_to_cairo( $cr );
+  # or, for backward compatibility
+  my $dims = $page->get_size; # a Poppler::Dimension object
+  my $w = $dims->get_width;
+  my $h = $dims->get_height;
 
-    $cr->show_page;
-    $surface->write_to_png ('output.png');
+  # do other fancy things (get page links, annotations, movies, etc)
+  # (see poppler-glib documentation for details)
 
-__END__
+  # render to a Cairo surface
+  use Cairo;
+  my $surface = Cairo::ImageSurface->create( 'argb32', 100, 100 );
+  my $cr = Cairo::Context->create( $surface );
+  $page->render_to_cairo( $cr );
+  $cr->show_page;
+
+=head1 ABSTRACT
+
+Bindings to the poppler PDF library via the Glib interface. Allows
+querying of a PDF file structure and rendering to various output targets.
 
 =head1 DESCRIPTION
 
+The C<Poppler> module provides complete bindings to the poppler PDF library
+through the Glib interface. Find out more about poppler at
+L<http://poppler.freedesktop.org>.
 
-=head1 L<Poppler::Document>
+As of version 1.01, no XS is used directly but bindings are provided using
+GObject introspection and the L<Glib::Object::Introspection> module. See the
+L<Poppler/SYNOPSIS> for a brief example of how the module can be used. For
+detailed documentation on the available classes and methods, see the poppler
+glib documentation for the C libraries and the L<Glib::Object::Introspection>
+documentation for a description of how methods are mapped between the C
+libraries and the Perl namespace.
 
-=head2 L<Poppler::Document> Blessed Object = Poppler::Document->new_from_file( STRING uri )
+=head1 CONSTRUCTORS
 
-=head2 L<Poppler::Document> Blessed Object = Poppler::Document->new_from_data( STRING pdf_data, length ( STRING pdf_data ) )
+=over
 
-=head2 BOOLEAN = $poppler_document->save( STRING uri )
+=item new_from_file ($filename)
 
-=head2 BOOLEAN = $poppler_document->save_a_copy( STRING uri )
+Takes a system path or URI to a PDF file as an argument and returns a
+Poppler::Document object. The C<poppler-glib> library itself requires a full
+URI (e.g. "file:///home/user/file.pdf") but this module attempts to convert
+regular system paths if provided via the L<URI> module.
 
-=head2 INT = $poppler_document->get_n_pages()
+=item new_from_data ($data)
 
-=head2 BOOLEAN = $poppler_documnet->has_attachment()
+Takes a PDF data chunk as an argument and returns a Poppler::Document object.
 
-=head2 LIST OF L<Poppler::Attachment> = $poppler_document->get_attachments()
+=back
 
-=head2 L<Poppler::Page> Blessed Object = $poppler_document->get_page_by_label( STRING label );
+=head1 METHODS
 
-=head2 L<Poppler::Page> Blessed Object = $poppler_document->get_page( INT page_number );
+For details on the classes and methods available beyond the constructors
+listed above, please refer to the canonical documentation for the C library
+listed under L<Poppler/SEE ALSO>. A general discussion of how these classes
+and methods map to the Perl equivalents can be found in the
+L<Glib::Object::Introspection> documentation. Generally speaking, a C function
+such as 'poppler_document_get_title' would map to
+'Poppler::Document->get_title'. Methods that return a G
+
+=cut
+
+use strict;
+use warnings;
+use Carp qw/croak/;
+use Cwd qw/abs_path/;
+use Exporter;
+use Glib::Object::Introspection;
+use URI::file;
+use FindBin;
+
+our @ISA = qw(Exporter);
+
+my $_POPPLER_BASENAME = 'Poppler';
+my $_POPPLER_VERSION  = '0.18';
+my $_POPPLER_PACKAGE  = 'Poppler';
+
+=head2 Customizations and overrides
+
+In order to make things more Perlish, C<PDF::Poppler> customizes the API generated
+by L<Glib::Object::Introspection> in a few spots:
+
+=over
+
+=cut
+
+# - Customizations ---------------------------------------------------------- #
+
+=item * The array ref normally returned by the following functions is flattened
+into a list:
+
+=over
+
+=item PDF::Poppler::Document::get_attachments
+
+=item PDF::Poppler::Page::get_link_mapping
+
+=item PDF::Poppler::Page::find_text
+
+=item PDF::Poppler::Page::find_text_with_options
+
+=item PDF::Poppler::Page::get_annot_mapping
+
+=item PDF::Poppler::Page::get_form_field_mapping
+
+=item PDF::Poppler::Page::get_image_mapping
+
+=item PDF::Poppler::Page::get_link_mapping
+
+=item PDF::Poppler::Page::get_selection_region
+
+=item PDF::Poppler::Page::get_text_attributes
+
+=item PDF::Poppler::Page::get_text_attributes_for_area
+
+=back
+
+=cut
+
+my @_POPPLER_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
+  PDF::Poppler::Document::get_attachments
+  PDF::Poppler::Page::get_link_mapping
+  PDF::Poppler::Page::find_text
+  PDF::Poppler::Page::find_text_with_options
+  PDF::Poppler::Page::get_annot_mapping
+  PDF::Poppler::Page::get_form_field_mapping
+  PDF::Poppler::Page::get_image_mapping
+  PDF::Poppler::Page::get_link_mapping
+  PDF::Poppler::Page::get_selection_region
+  PDF::Poppler::Page::get_text_attributes
+  PDF::Poppler::Page::get_text_attributes_for_area
+/;
+
+=item * The following functions normally return a boolean and additional out
+arguments, where the boolean indicates whether the out arguments are valid.
+They are altered such that when the boolean is true, only the additional out
+arguments are returned, and when the boolean is false, an empty list is
+returned.
+
+=over
+
+=item PDF::Poppler::Document::get_id
+
+=item PDF::Poppler::Page::get_text_layout
+
+=item PDF::Poppler::Page::get_text_layout_for_area
+
+=item PDF::Poppler::Page::get_thumbnail_size
+
+=back
+
+=cut
+
+my @_POPPLER_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
+  PDF::Poppler::Document::get_id
+  PDF::Poppler::Page::get_text_layout
+  PDF::Poppler::Page::get_text_layout_for_area
+  PDF::Poppler::Page::get_thumbnail_size
+/;
 
 
+# - Wiring ------------------------------------------------------------------ #
 
-=head1 L<Poppler::Page>
+sub import {
 
-=head2 INT = $poppler_page->get_index( ) 
+  Glib::Object::Introspection->setup (
+    search_path => $Findbin::Bin,
+    basename    => $_POPPLER_BASENAME,
+    version     => $_POPPLER_VERSION,
+    package     => $_POPPLER_PACKAGE,
+    flatten_array_ref_return_for => \@_POPPLER_FLATTEN_ARRAY_REF_RETURN_FOR,
+    handle_sentinel_boolean_for => \@_POPPLER_HANDLE_SENTINEL_BOOLEAN_FOR,
+  );
 
-=head2 $poppler_page->render_to_cairo( L<Cairo::Context> cr )
+  # call into Exporter for the unrecognized arguments; handles exporting and
+  # version checking
+  PDF::Poppler->export_to_level (1, @_);
 
-=head2 L<Poppler::OutputDevData> Blessed Object = $page->prepare_output_dev( DOUBLE scale , INT rotation , BOOLEAN transparent )
+}
 
+# - Overrides --------------------------------------------------------------- #
 
+=item * Perl reimplementations of C<PDF::Poppler::Document::new_from_file>,
+C<PDF::Poppler::Document::save>, and C<PDF::Poppler::Document::save_a_copy>
+are provided which remove the need to provide filenames as URIs (e.g.
+"file:///absolute/path"). The module accepts either real URIs or regular
+system paths and will convert as necessary using the C<URI> module. Any of
+these formats should work:
 
+    $p = PDF::Poppler::Document->new_from_file( 'file:///home/user/file.pdf' );
+    $p = PDF::Poppler::Document->new_from_file( '/home/user/file.pdf' );
+    $p = PDF::Poppler::Document->new_from_file( 'file.pdf' );
 
-=head1 L<Poppler::OutputDevData>
+    # likewise for save()
+    # likewise for save_a_copy()
 
-=head2 L<Cairo::Context> = $output_dev_data->get_cairo_context()
+=cut
 
-=head2 L<Cairo::Surface> = $output_dev_data::OutputDevData->get_cairo_surface()
+sub PDF::Poppler::Document::new_from_file {
 
-=head2 SCALAR data = $output_dev_data->get_cairo_data()
+    my ($class, $fn, $pwd) = @_;
+
+    $fn = URI::file->new_abs($fn) 
+        if (! URI->new($fn)->has_recognized_scheme);
+    my $doc = Glib::Object::Introspection->invoke(
+        'Poppler', 'Document', 'new_from_file', $class, $fn, $pwd);
+
+    return $doc;
+
+}
+
+sub PDF::Poppler::Document::save {
+
+    my ($class, $fn) = @_;
+
+    $fn = URI::file->new_abs($fn) 
+        if (! URI->new($fn)->has_recognized_scheme);
+    my $bool = Glib::Object::Introspection->invoke(
+        'Poppler', 'Document', 'save', $class, $fn);
+
+    return $bool;
+
+}
+
+sub PDF::Poppler::Document::save_a_copy {
+
+    my ($class, $fn) = @_;
+
+    $fn = URI::file->new_abs($fn) 
+        if (! URI->new($fn)->has_recognized_scheme);
+    my $bool = Glib::Object::Introspection->invoke(
+        'Poppler', 'Document', 'save_a_copy', $class, $fn);
+
+    return $bool;
+
+}
+
+=back
+
+=cut
+
+1;
+
+__END__
 
 
 =head1 SEE ALSO
 
-github repository:
+=over
 
-    http://github.com/c9s/perl-poppler/tree/master
+=item * C library documentation for poppler-glib at
+L<http://people.freedesktop.org/~ajohnson/docs/poppler-glib/>.
 
-poppler:
+=item * L<Glib>
 
-    http://poppler.freedesktop.org/
+=item * L<Glib::Object::Introspection>
 
-=head1 AUTHOR
+=back
 
-Cornelius , C< cornelius.howl _at_ gmail.com >
+=head1 AUTHORS
+
+=over
+
+=item 2009-2016 Cornelius , < cornelius.howl _at_ gmail.com >
+
+=item 2016-present Jeremy Volkening <jdv@base2bio.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by c9s (Corenlius)
+Copyright (C) 2009-2016 by c9s (Cornelius)
+Copyright (C) 2016 by Jeremy Volkening
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.0 or,
 at your option, any later version of Perl 5 you may have available.
-
 
 =cut

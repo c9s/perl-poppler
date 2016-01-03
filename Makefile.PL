@@ -1,11 +1,13 @@
 use 5.010000;
 
+use strict;
+use warnings FATAL => 'all';
 use ExtUtils::PkgConfig;
 use ExtUtils::MakeMaker;
 
+# check for poppler-glib library
 my %extreqs = (
-    poppler => '0.10.5',
-    # XXX: poppler-data , glib ?
+    poppler => '0.18',
 );
 
 my %poppler_cfg;
@@ -19,27 +21,36 @@ if ($@ ne '') {
     exit 1;
 }
 
-
 WriteMakefile(
-    NAME              => 'Poppler',
-    VERSION_FROM      => 'lib/Poppler.pm', # finds $VERSION
-    PREREQ_PM         => {
-        Cairo => 0,
+    NAME          => 'Poppler',
+    VERSION_FROM  => 'lib/Poppler.pm',
+    ABSTRACT_FROM => 'lib/Poppler.pm',
+    AUTHOR        => q{Jeremy Volkening <jdv@base2bio.com>},
+    CONFIGURE_REQUIRES => {
+        "ExtUtils::MakeMaker" => 0,
+        "ExtUtils::PkgConfig" => 0,
     },
-    ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/Poppler.pm', # retrieve abstract from module
-       AUTHOR         => 'Cornelius <cornelius.howl@gmail.com>') : ()),
-    DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
-    INC     => `pkg-config --cflags poppler-glib`,
-    LIBS    =>  `pkg-config --libs poppler-glib`,
-    XS      => {
-        'Poppler.xs' => 'Poppler.c',
-        # 'Goo.xs' => 'Goo.c',
+    BUILD_REQUIRES => {
+        "Test::More" => 0,
     },
-    'OBJECT' => 'Poppler$(OBJ_EXT)', # Goo$(OBJ_EXT)' ,
+    PREREQ_PM     => {
+        "Glib::Object::Introspection" => "0.016",
+        "Cairo"      => 0,
+        "Carp"       => 0,
+        "Exporter"   => 0,
+        "URI"        => "1.60",
+    },
     META_MERGE        => {
+        'meta-spec' => { version => 2 },
         resources => {
-            repository => 'https://github.com/c9s/perl-poppler',
+            repository => {
+                type => 'git',
+                web => 'https://github.com/c9s/perl-poppler',
+                url => 'https://github.com/c9s/perl-poppler.git',
+            },
         },
     },
+    test  => {TESTS => "t/*.t"},
+    dist  => {COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    clean => {FILES => 'Poppler-*' },
 );

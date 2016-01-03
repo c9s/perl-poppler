@@ -1,12 +1,8 @@
 Changes
 lib/Poppler.pm
+lib/Poppler-0.18.gir
 Makefile.PL
 MANIFEST
-perl-poppler.h
-perlxs.pdf
-Poppler.xs
-ppport.h
-README
-t/Poppler.t
-test-case.pl
-typemap
+README.md
+t/poppler.t
+t/test.pdf
