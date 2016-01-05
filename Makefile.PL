@@ -10,15 +10,19 @@ my %extreqs = (
     poppler => '0.18',
 );
 
-my %poppler_cfg;
-print "Checking poppler lib\n";
-eval { %poppler_cfg = ExtUtils::PkgConfig->find ("poppler >= $extreqs{poppler}"); };
+print "Checking for poppler-glib\n";
+eval {ExtUtils::PkgConfig->find ("poppler-glib >= $extreqs{poppler}"); };
 if ($@ ne '') {
     warn $@; 
-    WriteMakefile(
-        PREREQ_FATAL => 1,
-    );
-    exit 1;
+
+    #WriteMakefile(
+        #PREREQ_FATAL => 1,
+    #);
+    #exit 1;
+
+    # For CPAN Testers, if we exit(0) it will be interpreted as a missing
+    # depencency
+    exit 0;
 }
 
 WriteMakefile(
