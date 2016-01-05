@@ -1,4 +1,4 @@
-package PDF::Poppler 1.01;
+package Poppler 1.01;
 
 =encoding utf8
 
@@ -101,6 +101,7 @@ use Exporter;
 use Glib::Object::Introspection;
 use URI::file;
 use FindBin;
+use Poppler::Page::Dimension;
 
 our @ISA = qw(Exporter);
 
@@ -110,7 +111,7 @@ my $_POPPLER_PACKAGE  = 'Poppler';
 
 =head2 Customizations and overrides
 
-In order to make things more Perlish, C<PDF::Poppler> customizes the API generated
+In order to make things more Perlish, C<Poppler> customizes the API generated
 by L<Glib::Object::Introspection> in a few spots:
 
 =over
@@ -124,44 +125,44 @@ into a list:
 
 =over
 
-=item PDF::Poppler::Document::get_attachments
+=item Poppler::Document::get_attachments
 
-=item PDF::Poppler::Page::get_link_mapping
+=item Poppler::Page::get_link_mapping
 
-=item PDF::Poppler::Page::find_text
+=item Poppler::Page::find_text
 
-=item PDF::Poppler::Page::find_text_with_options
+=item Poppler::Page::find_text_with_options
 
-=item PDF::Poppler::Page::get_annot_mapping
+=item Poppler::Page::get_annot_mapping
 
-=item PDF::Poppler::Page::get_form_field_mapping
+=item Poppler::Page::get_form_field_mapping
 
-=item PDF::Poppler::Page::get_image_mapping
+=item Poppler::Page::get_image_mapping
 
-=item PDF::Poppler::Page::get_link_mapping
+=item Poppler::Page::get_link_mapping
 
-=item PDF::Poppler::Page::get_selection_region
+=item Poppler::Page::get_selection_region
 
-=item PDF::Poppler::Page::get_text_attributes
+=item Poppler::Page::get_text_attributes
 
-=item PDF::Poppler::Page::get_text_attributes_for_area
+=item Poppler::Page::get_text_attributes_for_area
 
 =back
 
 =cut
 
 my @_POPPLER_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
-  PDF::Poppler::Document::get_attachments
-  PDF::Poppler::Page::get_link_mapping
-  PDF::Poppler::Page::find_text
-  PDF::Poppler::Page::find_text_with_options
-  PDF::Poppler::Page::get_annot_mapping
-  PDF::Poppler::Page::get_form_field_mapping
-  PDF::Poppler::Page::get_image_mapping
-  PDF::Poppler::Page::get_link_mapping
-  PDF::Poppler::Page::get_selection_region
-  PDF::Poppler::Page::get_text_attributes
-  PDF::Poppler::Page::get_text_attributes_for_area
+  Poppler::Document::get_attachments
+  Poppler::Page::get_link_mapping
+  Poppler::Page::find_text
+  Poppler::Page::find_text_with_options
+  Poppler::Page::get_annot_mapping
+  Poppler::Page::get_form_field_mapping
+  Poppler::Page::get_image_mapping
+  Poppler::Page::get_link_mapping
+  Poppler::Page::get_selection_region
+  Poppler::Page::get_text_attributes
+  Poppler::Page::get_text_attributes_for_area
 /;
 
 =item * The following functions normally return a boolean and additional out
@@ -172,23 +173,23 @@ returned.
 
 =over
 
-=item PDF::Poppler::Document::get_id
+=item Poppler::Document::get_id
 
-=item PDF::Poppler::Page::get_text_layout
+=item Poppler::Page::get_text_layout
 
-=item PDF::Poppler::Page::get_text_layout_for_area
+=item Poppler::Page::get_text_layout_for_area
 
-=item PDF::Poppler::Page::get_thumbnail_size
+=item Poppler::Page::get_thumbnail_size
 
 =back
 
 =cut
 
 my @_POPPLER_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
-  PDF::Poppler::Document::get_id
-  PDF::Poppler::Page::get_text_layout
-  PDF::Poppler::Page::get_text_layout_for_area
-  PDF::Poppler::Page::get_thumbnail_size
+  Poppler::Document::get_id
+  Poppler::Page::get_text_layout
+  Poppler::Page::get_text_layout_for_area
+  Poppler::Page::get_thumbnail_size
 /;
 
 
@@ -197,7 +198,7 @@ my @_POPPLER_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
 sub import {
 
   Glib::Object::Introspection->setup (
-    search_path => $Findbin::Bin,
+    search_path => $FindBin::Bin,
     basename    => $_POPPLER_BASENAME,
     version     => $_POPPLER_VERSION,
     package     => $_POPPLER_PACKAGE,
@@ -207,29 +208,29 @@ sub import {
 
   # call into Exporter for the unrecognized arguments; handles exporting and
   # version checking
-  PDF::Poppler->export_to_level (1, @_);
+  Poppler->export_to_level (1, @_);
 
 }
 
 # - Overrides --------------------------------------------------------------- #
 
-=item * Perl reimplementations of C<PDF::Poppler::Document::new_from_file>,
-C<PDF::Poppler::Document::save>, and C<PDF::Poppler::Document::save_a_copy>
+=item * Perl reimplementations of C<Poppler::Document::new_from_file>,
+C<Poppler::Document::save>, and C<Poppler::Document::save_a_copy>
 are provided which remove the need to provide filenames as URIs (e.g.
 "file:///absolute/path"). The module accepts either real URIs or regular
 system paths and will convert as necessary using the C<URI> module. Any of
 these formats should work:
 
-    $p = PDF::Poppler::Document->new_from_file( 'file:///home/user/file.pdf' );
-    $p = PDF::Poppler::Document->new_from_file( '/home/user/file.pdf' );
-    $p = PDF::Poppler::Document->new_from_file( 'file.pdf' );
+    $p = Poppler::Document->new_from_file( 'file:///home/user/file.pdf' );
+    $p = Poppler::Document->new_from_file( '/home/user/file.pdf' );
+    $p = Poppler::Document->new_from_file( 'file.pdf' );
 
     # likewise for save()
     # likewise for save_a_copy()
 
 =cut
 
-sub PDF::Poppler::Document::new_from_file {
+sub Poppler::Document::new_from_file {
 
     my ($class, $fn, $pwd) = @_;
 
@@ -242,7 +243,7 @@ sub PDF::Poppler::Document::new_from_file {
 
 }
 
-sub PDF::Poppler::Document::save {
+sub Poppler::Document::save {
 
     my ($class, $fn) = @_;
 
@@ -255,7 +256,7 @@ sub PDF::Poppler::Document::save {
 
 }
 
-sub PDF::Poppler::Document::save_a_copy {
+sub Poppler::Document::save_a_copy {
 
     my ($class, $fn) = @_;
 
@@ -265,6 +266,18 @@ sub PDF::Poppler::Document::save_a_copy {
         'Poppler', 'Document', 'save_a_copy', $class, $fn);
 
     return $bool;
+
+}
+
+sub Poppler::Page::get_size {
+
+    my ($class) = @_;
+
+    my ($w,$h) = Glib::Object::Introspection->invoke(
+        'Poppler', 'Page', 'get_size', $class);
+    return Poppler::Page::Dimension->new($w, $h)
+        if (! wantarray);
+    return($w, $h);
 
 }
 
