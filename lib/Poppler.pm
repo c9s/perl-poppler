@@ -98,6 +98,7 @@ use warnings;
 use Carp qw/croak/;
 use Cwd qw/abs_path/;
 use Exporter;
+use File::ShareDir;
 use Glib::Object::Introspection;
 use URI::file;
 use FindBin;
@@ -198,7 +199,7 @@ my @_POPPLER_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
 sub import {
 
   Glib::Object::Introspection->setup (
-    search_path => $FindBin::Bin,
+    search_path => File::ShareDir::dist_dir('Poppler'),
     basename    => $_POPPLER_BASENAME,
     version     => $_POPPLER_VERSION,
     package     => $_POPPLER_PACKAGE,
