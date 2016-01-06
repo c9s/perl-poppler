@@ -2,7 +2,22 @@ use 5.010000;
 
 use strict;
 use warnings;
+
 use Module::Build;
+use ExtUtils::PkgConfig;
+
+my %extra_libs = (
+    'poppler-glib' => '0.16',
+);
+
+for (keys %extra_libs) {
+    print "Checking for $_\n";
+    eval { ExtUtils::PkgConfig->find ("$_ >= $extra_libs{$_}"); };
+    if ($@ ne '') {
+        warn $@; 
+        exit 0;
+    }
+}
 
 my $builder = Module::Build->new(
     module_name        => 'Poppler',
