@@ -1,7 +1,7 @@
 .*
 !/.gitignore
-/Makefile
-/Makefile.old
+/Build
+/_build/
 /blib/
 /META.*
 /MYMETA.*
