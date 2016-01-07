@@ -8,3 +8,5 @@ README.md
 t/poppler.t
 t/test.pdf
 LICENSE
+META.yml
+META.json
