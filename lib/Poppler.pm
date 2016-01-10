@@ -92,7 +92,7 @@ listed under L<Poppler/SEE ALSO>. A general discussion of how these classes
 and methods map to the Perl equivalents can be found in the
 L<Glib::Object::Introspection> documentation. Generally speaking, a C function
 such as 'poppler_document_get_title' would map to
-'Poppler::Document->get_title'. Methods that return a G
+'Poppler::Document->get_title'.
 
 =cut
 
