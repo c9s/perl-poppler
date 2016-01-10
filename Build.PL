@@ -39,7 +39,7 @@ my $builder = Module::Build->new(
     },
     meta_merge => {
         resources => {
-            repository => 'https://github.com/c92/perl-poppler'
+            repository => 'https://github.com/c9s/perl-poppler'
         }
     },
     add_to_cleanup => [ 'Poppler-*' ],
