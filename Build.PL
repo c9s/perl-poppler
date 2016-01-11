@@ -34,7 +34,7 @@ my $builder = Module::Build->new(
         'Glib::Object::Introspection' => "0.016",
         'Carp'     => 0,
         'Exporter' => 0,
-        'URI'      => "1.66",
+        'URI'      => "1.64",
         'Cairo'    => 0,
     },
     meta_merge => {
