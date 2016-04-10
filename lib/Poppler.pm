@@ -1,6 +1,6 @@
 package Poppler;
 
-our $VERSION = "1.0101";
+our $VERSION = "1.0102";
 $VERSION = eval $VERSION;
 
 =encoding utf8
@@ -283,6 +283,42 @@ sub Poppler::Page::get_size {
         if (! wantarray);
     return($w, $h);
 
+}
+
+sub Poppler::Document::new_from_data {
+
+    my ($class, $data, $len, $pwd) = @_;
+
+    #-----------------------------
+    # this is how it should be done, but can't get it to work yet
+    #-----------------------------
+
+    #$data = _unpack_unless_array_ref( $data );
+    #$len = scalar(@$data);
+
+    #return Glib::Object::Introspection->invoke (
+        #$_POPPLER_BASENAME, 'Document', 'new_from_data',
+        #$class, $data, $len
+    #);
+
+    #-----------------------------
+    # this is an ugly hack to make things work
+    #-----------------------------
+
+    use File::Temp;
+    my $tmp = File::Temp->new( UNLINK => 1 );
+    print {$tmp} $data;
+    close $tmp;
+    return Poppler::Document->new_from_file("$tmp", $pwd);
+
+}
+
+sub _unpack_unless_array_ref {
+  my ($data) = @_;
+  local $@;
+  return eval { @{$data} }
+    ? $data
+    : [unpack 'C*', $data];
 }
 
 =back
