@@ -293,13 +293,13 @@ sub Poppler::Document::new_from_data {
     # this is how it should be done, but can't get it to work yet
     #-----------------------------
 
-    #$data = _unpack_unless_array_ref( $data );
-    #$len = scalar(@$data);
+    $data = _unpack_unless_array_ref( $data );
+    $len = scalar(@$data);
 
-    #return Glib::Object::Introspection->invoke (
-        #$_POPPLER_BASENAME, 'Document', 'new_from_data',
-        #$class, $data, $len
-    #);
+    return Glib::Object::Introspection->invoke (
+        $_POPPLER_BASENAME, 'Document', 'new_from_data',
+        $class, $data, $len
+    );
 
     #-----------------------------
     # this is an ugly hack to make things work
