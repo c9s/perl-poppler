@@ -45,7 +45,7 @@ Poppler - Bindings to the poppler PDF rendering library
   use Cairo;
   my $surface = Cairo::ImageSurface->create( 'argb32', 100, 100 );
   my $cr = Cairo::Context->create( $surface );
-  $page->render_to_cairo( $cr );
+  $page->render( $cr );
   $cr->show_page;
 
 =head1 ABSTRACT
