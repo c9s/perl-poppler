@@ -1,5 +1,8 @@
 Revision history for Perl extension Poppler.
 
+1.0103  Sun Apr 10 13:21:00 2016
+	- Pushed a new version with long-standing documentation bug fixes
+
 1.0102  Sun Apr 10 13:21:00 2016
 	- Fixed new_from_data() constructor
 

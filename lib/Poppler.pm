@@ -1,6 +1,6 @@
 package Poppler;
 
-our $VERSION = "1.0102";
+our $VERSION = "1.0103";
 $VERSION = eval $VERSION;
 
 =encoding utf8
